@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:interview_task/app/model_test/domain/entities/model_test_question_entity.dart';
+import 'package:interview_task/app/model_test/domain/entities/model_test_result_entity.dart';
 import 'package:interview_task/app/model_test/domain/usecases/get_model_test_question_usecase.dart';
+import 'package:interview_task/app/model_test/domain/usecases/get_model_test_result_usecase.dart';
 import 'package:interview_task/core/errors/failures.dart';
 import 'package:interview_task/core/provider/base_provider.dart';
 import 'package:interview_task/core/provider/view_state.dart';
@@ -15,6 +17,7 @@ const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
 class ModelTestProvider extends BaseProvider {
   GetModelTestListUsecase _modelTestListUsecase = sl<GetModelTestListUsecase>();
   GetModelTestQuestionUsecase _modelTestQuestionUsecase = sl<GetModelTestQuestionUsecase>();
+  GetModelTestResultUsecase _modelTestResultUsecase = sl<GetModelTestResultUsecase>();
 
   DateTime today = DateTime.now();
 
@@ -35,6 +38,9 @@ class ModelTestProvider extends BaseProvider {
 
   List<ModelTestQuestionEntity> _modelTestQuestionEntity = [];
   List<ModelTestQuestionEntity> get modelTestQuestionEntity => _modelTestQuestionEntity;
+
+  List<ModelTestResultEntity> _modelTestResultEntity = [];
+  List<ModelTestResultEntity> get modelTestResultEntity => _modelTestResultEntity;
 
   Future<void> fetchModelTestList() async {
     setState(ViewState.Busy);
@@ -85,6 +91,22 @@ class ModelTestProvider extends BaseProvider {
       },
       (List<ModelTestQuestionEntity> entity) {
         this._modelTestQuestionEntity = entity;
+        setState(ViewState.Idle);
+      },
+    );
+  }
+
+  Future<void> fetchModelTestResult(int? modelTestId, int? studentId) async {
+    setState(ViewState.Busy);
+
+    Either<Failure, List<ModelTestResultEntity>> results = await _modelTestResultUsecase(Params(modelTestId: modelTestId, studentId: studentId));
+
+    results.fold(
+      (failure) {
+        setState(ViewState.Error);
+      },
+      (List<ModelTestResultEntity> entity) {
+        this._modelTestResultEntity = entity;
         setState(ViewState.Idle);
       },
     );
