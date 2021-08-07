@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:interview_task/app/model_test/domain/entities/model_test_question_entity.dart';
+import 'package:interview_task/app/model_test/domain/usecases/get_model_test_question_usecase.dart';
 import 'package:interview_task/core/errors/failures.dart';
 import 'package:interview_task/core/provider/base_provider.dart';
 import 'package:interview_task/core/provider/view_state.dart';
@@ -12,6 +14,7 @@ const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
 
 class ModelTestProvider extends BaseProvider {
   GetModelTestListUsecase _modelTestListUsecase = sl<GetModelTestListUsecase>();
+  GetModelTestQuestionUsecase _modelTestQuestionUsecase = sl<GetModelTestQuestionUsecase>();
 
   DateTime today = DateTime.now();
 
@@ -29,6 +32,9 @@ class ModelTestProvider extends BaseProvider {
 
   List<ModelTestEntity> _modelTestEntity = [];
   List<ModelTestEntity> get modelTestEntity => _modelTestEntity;
+
+  List<ModelTestQuestionEntity> _modelTestQuestionEntity = [];
+  List<ModelTestQuestionEntity> get modelTestQuestionEntity => _modelTestQuestionEntity;
 
   Future<void> fetchModelTestList() async {
     setState(ViewState.Busy);
@@ -66,6 +72,22 @@ class ModelTestProvider extends BaseProvider {
       modelTestAction =  "Archived";
     }
     setState(ViewState.Idle);
+  }
+
+  Future<void> fetchModelTestQuestion(int modelTestId) async {
+    setState(ViewState.Busy);
+
+    Either<Failure, List<ModelTestQuestionEntity>> results = await _modelTestQuestionUsecase(modelTestId);
+
+    results.fold(
+      (failure) {
+        setState(ViewState.Error);
+      },
+      (List<ModelTestQuestionEntity> entity) {
+        this._modelTestQuestionEntity = entity;
+        setState(ViewState.Idle);
+      },
+    );
   }
   
 }

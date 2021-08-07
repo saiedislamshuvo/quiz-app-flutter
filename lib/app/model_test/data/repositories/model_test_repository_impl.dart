@@ -1,3 +1,4 @@
+import 'package:interview_task/app/model_test/domain/entities/model_test_question_entity.dart';
 import 'package:interview_task/core/errors/exceptions.dart';
 import 'package:interview_task/core/networks/network_info.dart';
 import 'package:interview_task/app/model_test/data/datasources/remote/model_test_remote_datasource.dart';
@@ -27,11 +28,20 @@ class ModelTestRepositoryImpl implements ModelTestRepository {
       }
     } else {
       return Left(ServerFailure());
-      // try {
+    }
+  }
 
-      // } on CacheException {
-      //   return Left(CacheFailure());
-      // }
+  @override
+  Future<Either<Failure, List<ModelTestQuestionEntity>>> getModelTestQuestion(int modelTestId) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final modelTestQuestion = await remoteDataSource.getModelTestQuestion(modelTestId);
+        return Right(modelTestQuestion);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(ServerFailure());
     }
   }
 

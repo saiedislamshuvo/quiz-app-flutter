@@ -90,6 +90,7 @@ class _HomePageState extends State<HomePage> {
                           backgroundColor: Colors.white,
                           backgroundImage: NetworkImage(entity.coverImage)
                         ),
+                        trailing: Icon(Icons.arrow_forward_ios)
                       ),
                     );
                   },

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:interview_task/app/model_test/domain/entities/model_test_entity.dart';
+import 'package:interview_task/app/model_test/presentation/pages/take_model_test._page.dart';
 import 'package:interview_task/app/model_test/presentation/providers/model_test_provider.dart';
+import 'package:interview_task/core/utils/screen_navigator.dart';
 import 'package:provider/provider.dart';
 
 class ModelTestDetailPage extends StatefulWidget {
@@ -157,7 +159,7 @@ class _ModelTestDetailPageState extends State<ModelTestDetailPage> {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () => {}, 
+                onPressed: () => ScreenNavigator.changeScreen(context, TakeModelTestPage()), 
                 child: Text(
                   modelTestProvider.modelTestAction
                 )
