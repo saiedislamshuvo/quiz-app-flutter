@@ -10,4 +10,5 @@ abstract class ModelTestRemoteDataSource {
   Future<List<ModelTestModel>> getModelTestList();
   Future<List<ModelTestQuestionModel>> getModelTestQuestion(int modelTestId);
   Future<List<ModelTestResultModel>> getModelTestResult(int? modelTestId, int? studentId);
+  Future<bool> postModelTestResult(Map<String, dynamic> data);
 }

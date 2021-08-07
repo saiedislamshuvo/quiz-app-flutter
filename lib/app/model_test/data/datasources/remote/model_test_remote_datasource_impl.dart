@@ -72,4 +72,33 @@ class ModelTestRemoteDataSourceImpl implements ModelTestRemoteDataSource {
       throw ServerException();
     }
   }
+
+  /* Params:
+   * student_full_name, 
+   * student_id, 
+   * model_test, 
+   * total_question_attended, 
+   * total_right_answer,
+   * total_wrong_answer, 
+   * total_negative_marks, 
+   * total_marks, 
+   * pass_fail, 
+   * duration
+   */
+  @override
+  Future<bool> postModelTestResult(Map<String, dynamic> data) async {
+    // http://165.22.196.82:8080/api/v1/mcq-exam-result-post/
+    final response = await client.post(
+      Uri.parse(Api.postMcqExamResultApi),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

@@ -8,4 +8,5 @@ abstract class ModelTestRepository {
   Future<Either<Failure, List<ModelTestEntity>>> getModelTestList();
   Future<Either<Failure, List<ModelTestQuestionEntity>>> getModelTestQuestion(int modelTestId);
   Future<Either<Failure, List<ModelTestResultEntity>>> getModelTestResult(int? modelTestId, int? studentId);
+  Future<Either<Failure, bool>> postModelTestResult(Map<String, dynamic> data);
 }

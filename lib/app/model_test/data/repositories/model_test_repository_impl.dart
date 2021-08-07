@@ -60,4 +60,18 @@ class ModelTestRepositoryImpl implements ModelTestRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, bool>> postModelTestResult(Map<String, dynamic> data) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final modelTestResult = await remoteDataSource.postModelTestResult(data);
+        return Right(modelTestResult);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(ServerFailure());
+    }
+  }
+
 }

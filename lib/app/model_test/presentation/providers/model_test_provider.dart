@@ -3,6 +3,7 @@ import 'package:interview_task/app/model_test/domain/entities/model_test_questio
 import 'package:interview_task/app/model_test/domain/entities/model_test_result_entity.dart';
 import 'package:interview_task/app/model_test/domain/usecases/get_model_test_question_usecase.dart';
 import 'package:interview_task/app/model_test/domain/usecases/get_model_test_result_usecase.dart';
+import 'package:interview_task/app/model_test/domain/usecases/post_model_test_result_usecase.dart';
 import 'package:interview_task/core/errors/failures.dart';
 import 'package:interview_task/core/provider/base_provider.dart';
 import 'package:interview_task/core/provider/view_state.dart';
@@ -18,6 +19,11 @@ class ModelTestProvider extends BaseProvider {
   GetModelTestListUsecase _modelTestListUsecase = sl<GetModelTestListUsecase>();
   GetModelTestQuestionUsecase _modelTestQuestionUsecase = sl<GetModelTestQuestionUsecase>();
   GetModelTestResultUsecase _modelTestResultUsecase = sl<GetModelTestResultUsecase>();
+  PostModelTestResultUsecase _postModelTestResultUsecase = sl<PostModelTestResultUsecase>();
+  
+  bool _postModelTestResultStatus = false;
+  bool get postModelTestResultStatus => _postModelTestResultStatus;
+  set postModelTestResultStatus(bool value) => this._postModelTestResultStatus = value;
 
   DateTime today = DateTime.now();
 
@@ -107,6 +113,22 @@ class ModelTestProvider extends BaseProvider {
       },
       (List<ModelTestResultEntity> entity) {
         this._modelTestResultEntity = entity;
+        setState(ViewState.Idle);
+      },
+    );
+  }
+
+  Future<void> postModelTestResult() async {
+    setState(ViewState.Busy);
+
+    Either<Failure, bool> results = await _postModelTestResultUsecase({});
+
+    results.fold(
+      (failure) {
+        setState(ViewState.Error);
+      },
+      (bool status) {
+        this._postModelTestResultStatus = status;
         setState(ViewState.Idle);
       },
     );
