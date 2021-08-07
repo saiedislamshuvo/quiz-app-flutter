@@ -28,10 +28,9 @@ class ModelTestRemoteDataSourceImpl implements ModelTestRemoteDataSource {
         'Content-Type': 'application/json',
       },
     );
-
     if (response.statusCode == 200) {
       return List<ModelTestModel>.from(
-        json.decode(response.body).map((x) => ModelTestModel.fromJson(x))
+        json.decode(utf8.decode(response.bodyBytes)).map((x) => ModelTestModel.fromJson(x))
       );
     } else {
       throw ServerException();

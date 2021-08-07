@@ -13,6 +13,20 @@ const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
 class ModelTestProvider extends BaseProvider {
   GetModelTestListUsecase _modelTestListUsecase = sl<GetModelTestListUsecase>();
 
+  DateTime today = DateTime.now();
+
+  String _name = '';
+  String get name => _name;
+  set name(String value) => this._name = value;
+
+  String _id = '';
+  String get id => _id;
+  set id(String value) => this._id = value;
+
+  String _modelTestAction = '';
+  String get modelTestAction => _modelTestAction;
+  set modelTestAction(String value) => this._modelTestAction = value;
+
   List<ModelTestEntity> _modelTestEntity = [];
   List<ModelTestEntity> get modelTestEntity => _modelTestEntity;
 
@@ -30,6 +44,28 @@ class ModelTestProvider extends BaseProvider {
         setState(ViewState.Idle);
       },
     );
+  }
+
+  void handleModelTestActionViaDate(ModelTestEntity entity) {
+    int betweenExam = today.compareTo(entity.examStartDateTime);
+    int endResult = today.compareTo(entity.examResultEndDateTime);
+    if(endResult <= 0) {
+      if(betweenExam == 0) {
+        modelTestAction = "Take Exam";
+      } else if(betweenExam < 0) {
+        modelTestAction =  "Upcoming";
+      } else {
+        int beforeExam = today.compareTo(entity.examEndDateTime);
+        if(beforeExam <= 0) {
+          modelTestAction =  "Take Exam";
+        } else {
+          modelTestAction =  "Get Result";
+        }
+      }
+    } else {
+      modelTestAction =  "Archived";
+    }
+    setState(ViewState.Idle);
   }
   
 }
