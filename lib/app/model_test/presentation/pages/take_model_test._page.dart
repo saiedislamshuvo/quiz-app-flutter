@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interview_task/app/model_test/domain/entities/model_test_question_entity.dart';
+import 'package:interview_task/app/model_test/presentation/package/countdown/widgets/countdown_widget.dart';
 import 'package:interview_task/app/model_test/presentation/pages/congrats_page.dart';
 import 'package:interview_task/app/model_test/presentation/providers/model_test_provider.dart';
 import 'package:interview_task/app/model_test/presentation/widgets/question_option_widget.dart';
@@ -22,6 +23,8 @@ class _TakeModelTestPageState extends State<TakeModelTestPage> {
     else ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Data Submit Failed, try again!")));
   }
 
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ModelTestProvider>(
@@ -43,24 +46,39 @@ class _TakeModelTestPageState extends State<TakeModelTestPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        modelTestProvider.name,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            modelTestProvider.name,
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          Text(
+                            modelTestProvider.id,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 10,),
-                      Text(
-                        modelTestProvider.id,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white
-                        ),
+                      CountdownFormatted(
+                        duration: Duration(seconds: 1),
+                        builder: (BuildContext ctx, String remaining, int inSecond) {
+                          modelTestProvider.duration = inSecond;
+                          return Text(
+                            remaining,
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          );
+                        },
                       ),
                     ],
                   ),
