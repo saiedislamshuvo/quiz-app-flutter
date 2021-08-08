@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:interview_task/app/model_test/domain/entities/model_test_question_entity.dart';
+import 'package:interview_task/app/model_test/presentation/pages/congrats_page.dart';
 import 'package:interview_task/app/model_test/presentation/providers/model_test_provider.dart';
+import 'package:interview_task/app/model_test/presentation/widgets/question_option_widget.dart';
+import 'package:interview_task/core/provider/view_state.dart';
+import 'package:interview_task/core/utils/screen_navigator.dart';
 import 'package:provider/provider.dart';
 
 class TakeModelTestPage extends StatefulWidget {
@@ -10,6 +15,13 @@ class TakeModelTestPage extends StatefulWidget {
 }
 
 class _TakeModelTestPageState extends State<TakeModelTestPage> {
+
+  handleModelTestResult(BuildContext context, ModelTestProvider modelTestProvider, int modelTestId) async {
+    await modelTestProvider.postModelTestResult(modelTestId);
+    if(modelTestProvider.postModelTestResultStatus) ScreenNavigator.replacementScreenUntil(context, CongratsPage());
+    else ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Data Submit Failed, try again!")));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ModelTestProvider>(
@@ -55,75 +67,29 @@ class _TakeModelTestPageState extends State<TakeModelTestPage> {
                 ),
               ),
               SizedBox(height: 10),
-              QuestionOptionWidget(),
-              QuestionOptionWidget()
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: modelTestProvider.modelTestQuestionEntity.length,
+                itemBuilder: (BuildContext context, int index) {
+                  ModelTestQuestionEntity entity = modelTestProvider.modelTestQuestionEntity[index];
+                  return QuestionOptionWidget(index: index, entity: entity,);
+                },
+              ),
+              SizedBox(height: 20),
+              modelTestProvider.state == ViewState.Busy
+              ? Center(child: CircularProgressIndicator())
+              : modelTestProvider.state == ViewState.Error
+              ? Center(child: Text('Oops, something wrong happened'))
+              : ElevatedButton(
+                onPressed: () => handleModelTestResult(context, modelTestProvider, modelTestProvider.modelTestQuestionEntity[0].modelTest!.id),
+                child: Text("Submit"),
+              ),
+              SizedBox(height: 20),
             ]
           ),
         )
       )
-    );
-  }
-}
-
-class QuestionOptionWidget extends StatelessWidget {
-  const QuestionOptionWidget({ Key? key }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                "1. This is first Question",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            SizedBox(height: 5,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ListTile(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                tileColor: Colors.green[100],
-                title: Text("Male"),
-                leading: Radio(
-                  value: 1,
-                  groupValue: -1,
-                  onChanged: (value) {},
-                  activeColor: Colors.green,
-                ),
-                trailing: Icon(Icons.check),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ListTile(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                tileColor: Colors.red[200],
-                title: Text("Female"),
-                leading: Radio(
-                  value: 2,
-                  groupValue: -1,
-                  onChanged: (value) {},
-                  activeColor: Colors.green,
-                ),
-                trailing: Icon(Icons.check),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

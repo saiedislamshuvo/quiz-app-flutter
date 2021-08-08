@@ -35,9 +35,7 @@ class ModelTestRemoteDataSourceImpl implements ModelTestRemoteDataSource {
 
   @override
   Future<List<ModelTestQuestionModel>> getModelTestQuestion(int modelTestId) async {
-    // http://165.22.196.82:8080/api/v1/question-bank/?model_test=4
-    String uri = "${Api.getMcqQuestionBankApi}?model_test=${modelTestId}";
-    print(uri);
+    String uri = "${Api.getMcqQuestionBankApi}?model_test=$modelTestId";
     final response = await client.get(
       Uri.parse(uri),
       headers: {
@@ -87,15 +85,15 @@ class ModelTestRemoteDataSourceImpl implements ModelTestRemoteDataSource {
    */
   @override
   Future<bool> postModelTestResult(Map<String, dynamic> data) async {
-    // http://165.22.196.82:8080/api/v1/mcq-exam-result-post/
     final response = await client.post(
       Uri.parse(Api.postMcqExamResultApi),
+      body: json.encode(data),
       headers: {
         'Content-Type': 'application/json',
       },
     );
     
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       return true;
     } else {
       return false;

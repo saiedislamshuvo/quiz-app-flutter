@@ -48,6 +48,35 @@ class ModelTestProvider extends BaseProvider {
   List<ModelTestResultEntity> _modelTestResultEntity = [];
   List<ModelTestResultEntity> get modelTestResultEntity => _modelTestResultEntity;
 
+  int _totalQuestionAttended = 0;
+  int get totalQuestionAttended => _totalQuestionAttended;
+  set totalQuestionAttended(int value) => this._totalQuestionAttended = value;
+
+  int _totalRightAnswer = 0;
+  int get totalRightAnswer => _totalRightAnswer;
+  set totalRightAnswer(int value) => this._totalRightAnswer = value;
+
+  int _totalWrongAnswer = 0;
+  int get totalWrongAnswer => _totalWrongAnswer;
+  set totalWrongAnswer(int value) => this._totalWrongAnswer = value;
+
+  double _totalNegativeMarks = 0;
+  double get totalNegativeMarks => _totalNegativeMarks;
+  set totalNegativeMarks(double value) => this._totalNegativeMarks = value;
+
+  double _totalMarks = 0;
+  double get totalMarks => _totalMarks;
+  set totalMarks(double value) => this._totalMarks = value;
+
+  int _duration = 0;
+  int get duration => _duration;
+  set duration(int value) => this._duration = value;
+
+  String _passFail = "F";
+  String get passFail => _passFail;
+  set passFail(String value) => this._passFail = value;
+
+
   Future<void> fetchModelTestList() async {
     setState(ViewState.Busy);
 
@@ -118,10 +147,34 @@ class ModelTestProvider extends BaseProvider {
     );
   }
 
-  Future<void> postModelTestResult() async {
+  void clearField() {
+    this.totalQuestionAttended = 0;
+    this.totalRightAnswer = 0;
+    this.totalWrongAnswer = 0;
+    this.totalNegativeMarks = 0;
+    this.totalMarks = 0;
+    this.duration = 0;
+    this.passFail = "F";
+  }
+
+  Future<void> postModelTestResult(modelTestId) async {
     setState(ViewState.Busy);
 
-    Either<Failure, bool> results = await _postModelTestResultUsecase({});
+    Map<String, dynamic> data = {
+      "student_full_name": this.name,
+      "student_id": this.id,
+      "model_test": modelTestId,
+      "total_question_attended": this.totalQuestionAttended,
+      "total_right_answer": this.totalRightAnswer,
+      "total_wrong_answer": this.totalWrongAnswer,
+      "total_negative_marks": this.totalNegativeMarks,
+      "total_marks": this.totalMarks,
+      "pass_fail": this.passFail,
+      "duration": this.duration
+    };
+
+    print(data);
+    Either<Failure, bool> results = await _postModelTestResultUsecase(data);
 
     results.fold(
       (failure) {
@@ -129,6 +182,7 @@ class ModelTestProvider extends BaseProvider {
       },
       (bool status) {
         this._postModelTestResultStatus = status;
+        if(status) this.clearField();
         setState(ViewState.Idle);
       },
     );

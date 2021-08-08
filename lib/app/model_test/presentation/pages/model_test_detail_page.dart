@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interview_task/app/model_test/domain/entities/model_test_entity.dart';
+import 'package:interview_task/app/model_test/presentation/pages/model_test_result_page.dart';
 import 'package:interview_task/app/model_test/presentation/pages/take_model_test._page.dart';
 import 'package:interview_task/app/model_test/presentation/providers/model_test_provider.dart';
 import 'package:interview_task/core/utils/screen_navigator.dart';
@@ -15,10 +16,25 @@ class ModelTestDetailPage extends StatefulWidget {
 
 class _ModelTestDetailPageState extends State<ModelTestDetailPage> {
 
+  void handleModelTest(BuildContext context, ModelTestProvider modelTestProvider) {
+    if(modelTestProvider.modelTestAction == "Take Exam") {
+      ScreenNavigator.changeScreen(context, TakeModelTestPage());
+    } else if(modelTestProvider.modelTestAction == "Upcoming") {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Model Test Is Upcoming")));
+    } else if(modelTestProvider.modelTestAction == "Get Result") {
+      ScreenNavigator.changeScreen(context, ModelTestResultPage(modelTestId: widget.entity.id));
+    } else if(modelTestProvider.modelTestAction == "Archived") {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Model Test Is Archived")));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("try again!")));
+    }
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       Provider.of<ModelTestProvider>(context, listen: false).handleModelTestActionViaDate(widget.entity);
+      Provider.of<ModelTestProvider>(context, listen: false).fetchModelTestQuestion(widget.entity.id);
     });
     super.initState();
   }
@@ -159,7 +175,7 @@ class _ModelTestDetailPageState extends State<ModelTestDetailPage> {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () => ScreenNavigator.changeScreen(context, TakeModelTestPage()), 
+                onPressed: () => handleModelTest(context, modelTestProvider),
                 child: Text(
                   modelTestProvider.modelTestAction
                 )
