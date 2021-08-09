@@ -19,7 +19,7 @@ class _TakeModelTestPageState extends State<TakeModelTestPage> {
 
   handleModelTestResult(BuildContext context, ModelTestProvider modelTestProvider, int modelTestId) async {
     await modelTestProvider.postModelTestResult(modelTestId);
-    if(modelTestProvider.postModelTestResultStatus) ScreenNavigator.replacementScreenUntil(context, CongratsPage());
+    if(modelTestProvider.postModelTestResultStatus) ScreenNavigator.replacementScreenUntil(context, CongratsPage(passOrFail: modelTestProvider.passFail == "P" ? true : false));
     else ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Data Submit Failed, try again!")));
   }
 

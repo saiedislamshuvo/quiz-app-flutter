@@ -154,7 +154,7 @@ class ModelTestProvider extends BaseProvider {
     this.totalNegativeMarks = 0;
     this.totalMarks = 0;
     this.duration = 0;
-    this.passFail = "F";
+    // this.passFail = "F";
   }
 
   Future<void> postModelTestResult(modelTestId) async {
